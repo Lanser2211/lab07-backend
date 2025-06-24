@@ -1,37 +1,41 @@
-// Importamos Sequelize, que es el ORM que utilizaremos para interactuar con la base de datos
+// Importamos dotenv para cargar variables de entorno
+import dotenv from "dotenv";
+dotenv.config();
+
+// Importamos Sequelize
 import Sequelize from "sequelize";
 
-// Importamos la configuración de la base de datos desde un archivo externo
+// Importamos configuración de la base de datos
 import dbConfig from "../config/db.config.js";
 
-// Importamos los modelos de usuario y rol
+// Importamos modelos
 import userModel from "./user.model.js";
 import roleModel from "./role.model.js";
 
-// Creamos una instancia de Sequelize con los parámetros de configuración
+// Creamos instancia de Sequelize con la configuración
 const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
-  host: dbConfig.HOST,                  // Dirección del servidor de base de datos
-  dialect: dbConfig.dialect,            // Tipo de base de datos (por ejemplo: "mysql", "postgres")
-  pool: dbConfig.pool,                  // Configuración del pool de conexiones
-  port: dbConfig.PORT,                  // Puerto en el que se conecta a la base de datos
+  host: dbConfig.HOST,
+  dialect: dbConfig.dialect,
+  port: dbConfig.PORT || 5432,
+  pool: dbConfig.pool,
+  logging: false, // Puedes poner true si quieres ver las consultas en consola
 });
 
-// Creamos un objeto para almacenar los modelos y la instancia de Sequelize
+// Creamos el objeto para almacenar Sequelize y modelos
 const db = {};
 
-// Asignamos Sequelize y la instancia sequelize al objeto db
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-// Inicializamos los modelos de usuario y rol, pasándoles la instancia de Sequelize y el objeto Sequelize
+// Definimos los modelos
 db.user = userModel(sequelize, Sequelize);
 db.role = roleModel(sequelize, Sequelize);
 
-// Definimos una relación de muchos a muchos entre los usuarios y roles
+// Relaciones muchos a muchos entre usuarios y roles
 db.role.belongsToMany(db.user, {
-  through: "user_roles",       // Nombre de la tabla intermedia
-  foreignKey: "roleId",        // Clave foránea en la tabla intermedia que referencia a roles
-  otherKey: "userId",          // Clave foránea en la tabla intermedia que referencia a usuarios
+  through: "user_roles",
+  foreignKey: "roleId",
+  otherKey: "userId",
 });
 
 db.user.belongsToMany(db.role, {
@@ -40,8 +44,8 @@ db.user.belongsToMany(db.role, {
   otherKey: "roleId",
 });
 
-// Definimos una constante con los posibles roles que se pueden asignar
+// Roles disponibles
 db.ROLES = ["user", "admin", "moderator"];
 
-// Exportamos el objeto db para que pueda ser utilizado en otras partes de la aplicación
+// Exportamos el objeto db
 export default db;
