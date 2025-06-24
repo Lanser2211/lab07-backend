@@ -1,10 +1,12 @@
+// app/config/db.config.js
+
 export default {
-  HOST: process.env.DB_HOST,
-  USER: process.env.DB_USER,
-  PASSWORD: process.env.DB_PASSWORD,
-  DB: process.env.DB_NAME,
+  HOST: "dpg-d1d4bo15pdvs73abmu3g-a",
+  USER: "admin",
+  PASSWORD: "wp5708xhGutdltB30bTURSsHLo7dvTZU",
+  DB: "jwt_auth_db_rvc0",
   dialect: "postgres",
-  port: process.env.DB_PORT || 5432,
+  PORT: 5432,
   pool: {
     max: 5,
     min: 0,
